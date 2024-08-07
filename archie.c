@@ -23,6 +23,7 @@ void clean_cache(const char *package_manager);
 void clean_orphans(const char *package_manager);
 void search_package(const char *package_manager, const char *package);
 void display_help();
+void display_iohelp();
 void prompt_install_yay();
 void get_input(char *input, const char *prompt);
 int is_valid_command(char command);
@@ -118,6 +119,18 @@ void search_package(const char *package_manager, const char *package) {
     snprintf(command, sizeof(command), "%s %s", package_manager, package);
     system(command);
 }
+
+void display_iohelp() {
+printf("Usage:\n");
+printf("    archie\n");
+printf("    archie <operation> [...]\n");
+printf("\n");
+printf("operations:\n");
+printf("    archie {-H --help}\n");
+printf("    archie {-V --version}\n");
+printf("    archie {-E --exec} <command>\n"); 
+}
+
 
 void display_help() {
     printf("Available options are:\n");
@@ -391,9 +404,13 @@ char **command_completion(const char *text, int start, int end) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc > 1 && strcmp(argv[1], "--version") == 0) {
+    if (argc > 1) {
+        if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0) {
         display_version();
         return 0;
+        } else if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-H") == 0) {
+            display_iohelp();
+        }
     }
 
     if (argc > 2 && strcmp(argv[1], "--exec") == 0) {
