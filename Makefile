@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -O2 -lreadline -lncurses
+CFLAGS = -Wall -Wextra -O2 -lreadline -lncurses -march=native -mtune=native
 TARGET = archie
 SRC = archie.c
 INSTALL_DIR = /usr/bin
