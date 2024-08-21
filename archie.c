@@ -114,15 +114,15 @@ void search_package(const char *package_manager, const char *package) {
 
 void display_help() {
     printf("%s\e[1mAvailable options are:%s\n", "\e[1m", "\e[0m");
-    printf("%su - Update the system%s\n", "\e[31m", "\e[0m");
-    printf("%si - Install a package%s\n", "\e[38;5;209m", "\e[0m");
-    printf("%sr - Remove a package%s\n", "\e[33m", "\e[0m");
-    printf("%sp - Purge a package%s\n", "\e[32m", "\e[0m");
-    printf("%sc - Clean cache%s\n", "\e[36m", "\e[0m");
-    printf("%so - Clean orphaned packages%s\n", "\e[34m", "\e[0m");
-    printf("%ss - Search for a package%s\n", "\e[35m", "\e[0m");
-    printf("%sh - Help%s\n", "\e[36m", "\e[0m");
-    printf("%sq - Quit%s\n", "\e[33m", "\e[0m");
+    printf("u - Update the system\n");
+    printf("i - Install a package\n");
+    printf("r - Remove a package\n");
+    printf("p - Purge a package\n");
+    printf("c - Clean cache\n");
+    printf("o - Clean orphaned packages\n");
+    printf("s - Search for a package\n");
+    printf("h - Help\n");
+    printf("q - Quit\n");
 }
 
 void prompt_install_yay() {
@@ -201,7 +201,6 @@ void handle_command(const char *input, const char *package_manager) {
             }
             case 'h': display_help(); break;
             case 'q': exit(0); break;
-            default: printf("Invalid option. Please correct your grammar and type a valid option.\n"); break;
         }
     } else {
         if (is_valid_command(choice)) {
