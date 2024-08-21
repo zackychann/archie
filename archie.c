@@ -201,7 +201,6 @@ void handle_command(const char *input, const char *package_manager) {
             }
             case 'h': display_help(); break;
             case 'q': exit(0); break;
-            default: printf("Invalid option. Please correct your grammar and type a valid option.\n"); break;
         }
     } else {
         if (is_valid_command(choice)) {
