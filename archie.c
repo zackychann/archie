@@ -113,7 +113,7 @@ void search_package(const char *package_manager, const char *package) {
 }
 
 void display_help() {
-    printf("%s\e[1mAvailable options are:%s\n", "\e[1m", "\e[0m");
+    printf("Available options are:\n");
     printf("u - Update the system\n");
     printf("i - Install a package\n");
     printf("r - Remove a package\n");
