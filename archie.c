@@ -23,7 +23,6 @@ void clean_cache(const char *package_manager);
 void clean_orphans(const char *package_manager);
 void search_package(const char *package_manager, const char *package);
 void display_help();
-void display_iohelp();
 void prompt_install_yay();
 void get_input(char *input, const char *prompt);
 int is_valid_command(char command);
@@ -35,7 +34,7 @@ char *command_generator(const char *text, int state);
 char **command_completion(const char *text, int start, int end);
 char* get_package_manager_version(const char *package_manager);
 
-// Function Definitions
+// Check if the Archie configuration file exists
 int check_archie_file() {
     const char *home = getenv("HOME");
     char path[MAX_INPUT_LENGTH];
@@ -44,28 +43,26 @@ int check_archie_file() {
     return (stat(path, &buffer) == 0);
 }
 
+// Determine the package manager in use
 int check_package_manager() {
-    if (check_archie_file()) {
-        return 2; // paru
-    }
-    if (system("command -v yay > /dev/null 2>&1") == 0) {
-        return 1; // yay
-    }
-    if (system("command -v paru > /dev/null 2>&1") == 0) {
-        return 2; // paru
-    }
+    if (check_archie_file()) return 2; // paru
+    if (system("command -v yay > /dev/null 2>&1") == 0) return 1; // yay
+    if (system("command -v paru > /dev/null 2>&1") == 0) return 2; // paru
     return 0; // none
 }
 
+// Check if Git is installed
 int check_git() {
     return system("command -v git > /dev/null 2>&1") == 0;
 }
 
+// Install Git
 void install_git() {
     printf("Installing git...\n");
     system("sudo pacman -S --noconfirm git");
 }
 
+// Install Yay
 void install_yay() {
     printf("Installing yay...\n");
     system("mkdir -p $HOME/.cache/archie/made-by-gurov && "
@@ -78,60 +75,56 @@ void install_yay() {
     printf("Installation of yay is complete. Please restart your shell and relaunch the script.\n");
 }
 
+// Update the system using the specified package manager
 void update_system(const char *package_manager) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s -Syu --noconfirm", package_manager);
     system(command);
 }
 
+// Install a package using the specified package manager
 void install_package(const char *package_manager, const char *package) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s -S %s", package_manager, package);
     system(command);
 }
 
+// Remove a package using the specified package manager
 void remove_package(const char *package_manager, const char *package) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s -R %s", package_manager, package);
     system(command);
 }
 
+// Purge a package using the specified package manager
 void purge_package(const char *package_manager, const char *package) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s -Rns %s", package_manager, package);
     system(command);
 }
 
+// Clean the cache of the specified package manager
 void clean_cache(const char *package_manager) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s -Sc --noconfirm", package_manager);
     system(command);
 }
 
+// Clean orphaned packages using the specified package manager
 void clean_orphans(const char *package_manager) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s -Rns $(pacman -Qdtq)", package_manager);
     system(command);
 }
 
+// Search for a package using the specified package manager
 void search_package(const char *package_manager, const char *package) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s %s", package_manager, package);
     system(command);
 }
 
-void display_iohelp() {
-printf("Usage:\n");
-printf("    archie\n");
-printf("    archie <operation> [...]\n");
-printf("\n");
-printf("operations:\n");
-printf("    archie {-H --help}\n");
-printf("    archie {-V --version}\n");
-printf("    archie {-E --exec} <command>\n"); 
-}
-
-
+// Display available commands
 void display_help() {
     printf("Available options are:\n");
     printf("u - Update the system\n");
@@ -145,6 +138,7 @@ void display_help() {
     printf("q - Quit\n");
 }
 
+// Prompt user to install Yay if not present
 void prompt_install_yay() {
     char response[10];
     printf("Error: Neither yay nor paru is installed.\n");
@@ -153,9 +147,7 @@ void prompt_install_yay() {
     scanf("%s", response);
 
     if (strcmp(response, "y") == 0 || strcmp(response, "yes") == 0) {
-        if (!check_git()) {
-            install_git();
-        }
+        if (!check_git()) install_git();
         install_yay();
     } else {
         printf("Exiting the program.\n");
@@ -163,6 +155,7 @@ void prompt_install_yay() {
     }
 }
 
+// Get user input with a prompt
 void get_input(char *input, const char *prompt) {
     char *line = readline(prompt);
     if (line) {
@@ -181,19 +174,17 @@ void get_input(char *input, const char *prompt) {
     }
 }
 
+// Check if the command is valid
 int is_valid_command(char command) {
-    return command == 'u' || command == 'i' || command == 'r' ||
-           command == 'p' || command == 'c' || command == 'o' ||
-           command == 's' || command == 'h' || command == 'q';
+    return strchr("uirpcoshq", command) != NULL;
 }
 
+// Handle user commands
 void handle_command(const char *input, const char *package_manager) {
     char choice = input[0];
     if (strlen(input) == 1 && is_valid_command(choice)) {
         switch (choice) {
-            case 'u':
-                update_system(package_manager);
-                break;
+            case 'u': update_system(package_manager); break;
             case 'i': {
                 char package[MAX_INPUT_LENGTH];
                 rl_attempted_completion_function = command_completion;
@@ -218,27 +209,17 @@ void handle_command(const char *input, const char *package_manager) {
                 purge_package(package_manager, package);
                 break;
             }
-            case 'c':
-                clean_cache(package_manager);
-                break;
-            case 'o':
-                clean_orphans(package_manager);
-                break;
+            case 'c': clean_cache(package_manager); break;
+            case 'o': clean_orphans(package_manager); break;
             case 's': {
                 char package[MAX_INPUT_LENGTH];
                 get_input(package, "Enter package name to search: ");
                 search_package(package_manager, package);
                 break;
             }
-            case 'h':
-                display_help();
-                break;
-            case 'q':
-                exit(0);
-                break;
-            default:
-                printf("Invalid option. Please correct your grammar and type a valid option.\n");
-                break;
+            case 'h': display_help(); break;
+            case 'q': exit(0); break;
+            default: printf("Invalid option. Please correct your grammar and type a valid option.\n"); break;
         }
     } else {
         if (is_valid_command(choice)) {
@@ -246,7 +227,6 @@ void handle_command(const char *input, const char *package_manager) {
             char response[10];
             get_input(response, "");
             if (strcmp(response, "y") == 0 || strcmp(response, "yes") == 0) {
-                // Call the command handler again with the valid command
                 char new_input[2] = { choice, '\0' }; // Create a new input string with the valid command
                 handle_command(new_input, package_manager);
             } else {
@@ -259,6 +239,7 @@ void handle_command(const char *input, const char *package_manager) {
     }
 }
 
+// Handle execution of commands from arguments
 void handle_exec_command(const char *command, const char *package_manager) {
     if (strcmp(command, "u") == 0) {
         update_system(package_manager);
@@ -289,13 +270,12 @@ void handle_exec_command(const char *command, const char *package_manager) {
     }
 }
 
+// Get the version of the specified package manager
 char* get_package_manager_version(const char *package_manager) {
     char command[COMMAND_BUFFER_SIZE];
     snprintf(command, sizeof(command), "%s --version", package_manager);
     FILE *fp = popen(command, "r");
-    if (fp == NULL) {
-        return strdup("unknown");
-    }
+    if (fp == NULL) return strdup("unknown");
 
     char version[COMMAND_BUFFER_SIZE];
     if (fgets(version, sizeof(version), fp) != NULL) {
@@ -305,28 +285,15 @@ char* get_package_manager_version(const char *package_manager) {
     }
     pclose(fp);
 
-    // Remove the package manager name from the version string
+    // Extract version number
     char *version_start = strstr(version, " ");
-    if (version_start != NULL) {
-        version_start++;
-    } else {
-        version_start = version;
-    }
-
-    return strdup(version_start);
+    return strdup(version_start ? version_start + 1 : version);
 }
 
+// Display the version of the program
 void display_version() {
     int pm_check = check_package_manager();
-    const char *package_manager;
-    if (pm_check == 1) {
-        package_manager = "yay";
-    } else if (pm_check == 2) {
-        package_manager = "paru";
-    } else {
-        package_manager = "none";
-    }
-
+    const char *package_manager = (pm_check == 1) ? "yay" : (pm_check == 2) ? "paru" : "none";
     char *pm_version = get_package_manager_version(package_manager);
 
     printf("    __     Archie v1.3 - Fast & easy package management for Arch Linux\n"
@@ -337,8 +304,10 @@ void display_version() {
            "/ /   | |_ This program may be freely redistributed under the terms of the GNU General Public License.\n"
            "\\ \\._,\\ '/ Created & maintained by Gurov\n"
            " `--'  `\"  With the help of scklss and Keiran\n", package_manager, pm_version);
+    free(pm_version);
 }
 
+// Get available pacman commands
 char **get_pacman_commands() {
     FILE *fp;
     char path[1035];
@@ -352,7 +321,7 @@ char **get_pacman_commands() {
         exit(1);
     }
 
-    // Read the output a line at a time and store it in the commands array
+    // Read the output and store it in the commands array
     while (fgets(path, sizeof(path), fp) != NULL) {
         command_count++;
         commands = realloc(commands, sizeof(char *) * (command_count + 1));
@@ -360,22 +329,19 @@ char **get_pacman_commands() {
         commands[command_count - 1] = strdup(path);
     }
 
-    // Close the file
+    // Close the file and null-terminate the array
     pclose(fp);
-
-    // Null-terminate the array
     commands[command_count] = NULL;
 
     return commands;
 }
 
+// Generate command matches for completion
 char *command_generator(const char *text, int state) {
     static int list_index, len;
     static char **commands = NULL;
 
-    if (!commands) {
-        commands = get_pacman_commands();
-    }
+    if (!commands) commands = get_pacman_commands();
 
     // Initialize on first call
     if (!state) {
@@ -392,10 +358,11 @@ char *command_generator(const char *text, int state) {
         }
     }
 
-    // If no more matches, return NULL
+    // No more matches
     return NULL;
 }
 
+// Command completion function
 char **command_completion(const char *text, int start, int end) {
     (void)start; // Suppress unused parameter warning
     (void)end;   // Suppress unused parameter warning
@@ -403,49 +370,51 @@ char **command_completion(const char *text, int start, int end) {
     return rl_completion_matches(text, command_generator);
 }
 
+// Main function
 int main(int argc, char *argv[]) {
     if (argc > 1) {
         if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0) {
-        display_version();
-        return 0;
+            display_version();
+            return 0;
+        } else if (strcmp(argv[1], "--exec") == 0 || strcmp(argv[1], "-E") == 0) {
+            const char *package_manager;
+            int pm_check = check_package_manager();
+
+            if (pm_check == 1) {
+                package_manager = "yay";
+            } else if (pm_check == 2) {
+                package_manager = "paru";
+            } else {
+                prompt_install_yay();
+                return 1;
+            }
+
+            if (argc > 2) {
+                handle_exec_command(argv[2], package_manager);
+            } else {
+                char command[MAX_INPUT_LENGTH];
+                get_input(command, "Enter command to execute (u, i, r, p, c, o, s, h): ");
+                handle_exec_command(command, package_manager);
+            }
+            return 0; // Exit after executing the command
         } else if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-H") == 0) {
-            display_iohelp();
+            printf("Usage:\n");
+            printf("          archie\n");
+            printf("          archie <flag> [...]\n\n");
+            printf("flags:\n");
+            printf("          archie {-H --help}\n");
+            printf("          archie {-V --version}\n");
+            printf("          archie {-E --exec} <command>\n\n");
+            printf("commands:\n");
+            printf("          archie {-E --exec} u (update the system)\n");
+            printf("          archie {-E --exec} i (install a package)\n");
+            printf("          archie {-E --exec} r (remove a package)\n");
+            printf("          archie {-E --exec} p (purge a package)\n");
+            printf("          archie {-E --exec} c (clean cache)\n");
+            printf("          archie {-E --exec} o (clean orphaned packages)\n");
+            printf("          archie {-E --exec} s (search for a package)\n");
+            return 0;
         }
-    }
-
-    if (argc > 2 && strcmp(argv[1], "--exec") == 0) {
-        const char *package_manager;
-        int pm_check = check_package_manager();
-
-        if (pm_check == 1) {
-            package_manager = "yay";
-        } else if (pm_check == 2) {
-            package_manager = "paru";
-        } else {
-            prompt_install_yay();
-            return 1;
-        }
-
-        handle_exec_command(argv[2], package_manager);
-        return 0; // Exit after executing the command
-    } else if (argc == 2 && strcmp(argv[1], "--exec") == 0) {
-        // If --exec is provided without a command, prompt for input
-        const char *package_manager;
-        int pm_check = check_package_manager();
-
-        if (pm_check == 1) {
-            package_manager = "yay";
-        } else if (pm_check == 2) {
-            package_manager = "paru";
-        } else {
-            prompt_install_yay();
-            return 1;
-        }
-
-        char command[MAX_INPUT_LENGTH];
-        get_input(command, "Enter command to execute (u, i, r, p, c, o, s, h): ");
-        handle_exec_command(command, package_manager);
-        return 0; // Exit after executing the command
     }
 
     const char *package_manager;
