@@ -113,7 +113,7 @@ void search_package(const char *package_manager, const char *package) {
 }
 
 void display_help() {
-    printf("Available options are:\n");
+    printf("\e[1mAvailable options are:\e[0m\n");
     printf("u - Update the system\n");
     printf("i - Install a package\n");
     printf("r - Remove a package\n");
@@ -273,14 +273,14 @@ void display_version() {
     const char *package_manager = (pm_check == 1) ? "yay" : (pm_check == 2) ? "paru" : "none";
     char *pm_version = get_package_manager_version(package_manager);
 
-    printf("    __     Archie v1.4 - Fast & easy package management for Arch Linux\n"
-           " .:--.'.   Written in C, powered by YAY and Pacman.\n"
-           "/ |   \\ |  %s %s\n"
-           "`\" __ | |  \n"
-           " .'.''| |  \n"
-           "/ /   | |_ This program may be freely redistributed under the terms of the GNU General Public License.\n"
-           "\\ \\._,\\ '/ Created & maintained by Gurov\n"
-           " `--'  `\"  With the help of scklss and Keiran\n", package_manager, pm_version);
+    printf("\e[34m    __    \e[0mArchie v1.4 - Fast & easy package management for Arch Linux\n"
+           "\e[34m .:--.'.  \e[0m Written in C, powered by YAY and Pacman.\n"
+           "\e[34m/ |   \\ |\e[0m  %s %s\n"
+           "\e[34m`\" __ | |\e[0m  \n"
+           "\e[34m .'.''| | \e[0m \n"
+           "\e[34m/ /   | |_\e[0m This program may be freely redistributed under the terms of the GNU General Public License.\n"
+           "\e[34m\\ \\._,\\ '/\e[0m Created & maintained by Gurov\n"
+           "\e[34m `--'  `\"\e[0m  With the help of scklss and Keiran\n", package_manager, pm_version);
     free(pm_version);
 }
 
