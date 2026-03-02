@@ -4,18 +4,47 @@
 
 **This project is no longer actively maintained** due to disagreements among the original development team. 
 
-### Recommended Alternatives
+## Recommended Alternatives
 
-We encourage users to migrate to one of these actively maintained alternatives:
+This project is no longer maintained. The tools below carry the torch.
 
-**🌟 [Archium](https://github.com/keircn/archium)** by [Keiran](https://github.com/keircn)
-- Comprehensive feature set with ongoing development
-- Active community support and regular updates
+Both are **independently maintained**, actively developed, and keep the original Archie idea intact: short commands, fast startup, less typing. They just take very different approaches.
 
-**🔧 [Archie-ng](https://github.com/Gur0v/archie-ng)** 
-- Maintained fork by one of the original developers
-- Enhanced and refined version of the original codebase
-- More polished user experience
+### 🌟 **[Archium](https://github.com/keircn/archium)** by [Keiran](https://github.com/keircn)
+
+A faithful continuation of classic Archie. Same foundation, steadily improved and expanded.
+
+* Native C binary, tiny and extremely fast
+* Works with `yay`, `paru`, or plain `pacman`
+* Readline editing and proper bash/fish/zsh completions
+* Built-in config, logs, and cache handling
+* Plugin system for custom commands and extensions
+* Lots of features, lots of knobs, very customizable
+* Mature, stable, and regularly updated
+
+If you want **“Archie, but bigger and more capable”**, this is the natural upgrade.
+
+Think: the original, refined and reinforced.
+
+### 🦀 **[Archie-ng](https://github.com/Gur0v/archie-ng)** by [Gurov](https://github.com/Gur0v)
+
+A full replacement rewritten from scratch in Rust by one of the original developers. Not a fork with fixes. A clean break.
+
+This is the more **radical** take.
+
+* Memory-safe by design (no leaks, no overflows, no shell injection footguns)
+* Instant startup and non-blocking completion
+* Declarative TOML config where every command is user-defined
+* Per-command prompts, confirmations, and behavior control
+* Minimal runtime deps
+* Simpler internals and fewer edge-case failures
+* Very active development
+
+Same single-key workflow, but the guts are completely different. Less legacy, fewer sharp edges, more “do it right from the start.”
+
+If you want something **lean, modern, and fundamentally rethought**, this is the forward-looking option.
+
+Think: Archie rebuilt from the ground up, not patched.
 
 ## Features
 
