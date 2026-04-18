@@ -28,21 +28,20 @@ Think: the original, refined and reinforced.
 
 ### 🦀 **[Archie-ng](https://github.com/Gur0v/archie-ng)** by [Gurov](https://github.com/Gur0v)
 
-A full replacement rewritten from scratch in Rust by one of the original developers. Not a fork with fixes. A clean break.
+A full rewrite from scratch in Rust. Not a fork with fixes. A clean break.
 
-This is the more **radical** take.
-
-* Memory-safe by design (no leaks, no overflows, no shell injection footguns)
-* Instant startup and non-blocking completion
-* Declarative TOML config where every command is user-defined
-* Per-command prompts, confirmations, and behavior control
-* Minimal runtime deps
-* Simpler internals and fewer edge-case failures
+* Memory-safe by design: no leaks, no overflows, no shell injection
+* No dependency on `yay` or `paru`: ships its own pacman+AUR backend
+* Instant startup, non-blocking tab completion with a warm cache
+* Fully declarative TOML config: every command, prompt, and keybinding is user-defined
+* Per-command confirmation, prompts, and completion source control
+* Custom commands via `shell:` prefix for anything outside the builtins
+* Minimal runtime dependencies
 * Very active development
 
-Same single-key workflow, but the guts are completely different. Less legacy, fewer sharp edges, more “do it right from the start.”
+Same single-key workflow, but the internals are completely different. Less legacy, fewer sharp edges.
 
-If you want something **lean, modern, and fundamentally rethought**, this is the forward-looking option.
+If you want something **lean, modern, and built right from the start**, this is the forward-looking option.
 
 Think: Archie rebuilt from the ground up, not patched.
 
